@@ -1,0 +1,68 @@
+[package]
+name = "rust-poc-ai-model-comparison"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# dependencies (versions are managerd by common-starter crate) ########################################################
+# API framewrok dependencies
+axum = {version = "=0.8.8", features = ["http2", "ws", "multipart"]}
+tower-http = { version = "=0.6.8", features = ["catch-panic"] }
+hyper-util = { version = "=0.1.20", features = ["client", "client-legacy", "tokio", "http2"] }
+
+# thread managment dependencies
+tokio = { version = "=1.50.0", features = ["full"] }
+async-trait = { version = "=0.1.89" }
+
+# JSON serialize and deserialize dependencies
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = { version = "=1.0.149" }
+
+# logging dependencies
+log = { version = "=0.4.29" }
+log4rs = { version = "=1.4.0" }
+
+# other required crates ################################################################################################
+# ...
+# include creates with specific version or features here...
+# ...
+http-body-util = { version = "=0.1.3" }
+
+[dev-dependencies] # development dependencies - should not be exported
+# testing dependencies (versions are managed by common-test-starter crate) ################################################
+# mock dependencies
+mockall = { version = "=0.14.0" }
+
+# parametrized test cases dependencies
+rstest = { version = "=0.26.1" }
+
+# run test sequencially
+serial_test = { version = "=3.4.0" }
+
+# unit and integration tests util / tools dependencies
+tower = { version = "=0.5.3", features = ["util", "timeout"] }
+
+# http mock server for external API calls
+wiremock = { version = "=0.6.5" }
+
+# other required testing crates ########################################################################################
+# add from here
+# ...
+
+########################################################################################################################
+# workaround to define IT context as feature just for test purposes ####################################################
+rust-poc-ai-model-comparison = {path = ".", features = ["integration-test-context"]}
+
+########################################################################################################################
+[features]
+# workaround to define IT context as feature just for test purposes
+integration-test-context = []
+
+# optimize dev and test execution - based on https://doc.rust-lang.org/cargo/reference/profiles.html ###################
+[profile.dev] # these values are optimized - please, check with the tech team before modify any
+incremental = true # faster for dev purposes
+lto = "off" # better optimized code, using whole-program analysis, at the cost of longer linking time
+
+[profile.dev.build-override] # these values are optimized - please, check with the tech team before modify any
+opt-level = 0 # no optimizations - faster for dev purposes
+codegen-units = 256 # default is 256 - may speed up compile times, but may also produce slower code
